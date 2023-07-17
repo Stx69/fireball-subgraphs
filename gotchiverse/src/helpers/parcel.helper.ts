@@ -14,6 +14,9 @@ export const loadOrCreateParcel = (realmId: BigInt): Parcel => {
     parcel.tokenId = realmId;
     parcel.timesTraded = BigInt.zero();
     parcel.alchemica = [BigInt.zero(), BigInt.zero(), BigInt.zero(), BigInt.zero()];
+    parcel.capacities = [];
+    parcel.harvestRates = [];
+    parcel.availableAlchemica = [];
   }
 
   log.warning('parcel: {}, diamond: {}', [realmId.toString(), dataSource.address().toHexString()]);
@@ -37,9 +40,52 @@ export const loadOrCreateParcel = (realmId: BigInt): Parcel => {
       parcel.alphaBoost = metadata.boost[AlchemicaTypes.Alpha];
       parcel.kekBoost = metadata.boost[AlchemicaTypes.Kek];
 
-      log.warning('parcel: {}, DATA ARRIVED, id - {}', [realmId.toString(), metadata.parcelId]);
+      log.warning('parcel: {}, PARCEL INFO DATA ARRIVED, id - {}', [realmId.toString(), metadata.parcelId]);
     } else {
-      log.error('parcel: {}, REVERTED', [realmId.toString()]);
+      log.error('parcel: {}, PARCEL INFO REVERTED', [realmId.toString()]);
+    }
+  }
+
+  if (!parcel.harvestRates) {
+    const contract = RealmDiamond.bind(dataSource.address());
+    const _parcelHarvestRates = contract.try_getHarvestRates(realmId);
+
+    if (!_parcelHarvestRates.reverted) {
+      const metadata = _parcelHarvestRates.value;
+      parcel.harvestRates = metadata;
+
+      log.warning('parcel: {}, PARCEL HARVEST DATA ARRIVED, id - {}', [realmId.toString(), metadata.toString()]);
+    } else {
+      log.error('parcel: {}, PARCEL HARVEST REVERTED', [realmId.toString()]);
+    }
+  }
+  if (!parcel.capacities) {
+    const contract = RealmDiamond.bind(dataSource.address());
+    const _parcelCapacities = contract.try_getCapacities(realmId);
+
+    if (!_parcelCapacities.reverted) {
+      const metadata = _parcelCapacities.value;
+      parcel.capacities = metadata;
+
+      log.warning('parcel: {}, PARCEL CAP DATA ARRIVED, id - {}', [realmId.toString(), metadata.toString()]);
+    } else {
+      log.error('parcel: {}, PARCEL CAP REVERTED', [realmId.toString()]);
+    }
+  }
+  if (!parcel.availableAlchemica) {
+    const contract = RealmDiamond.bind(dataSource.address());
+    const _parcelAvailableAlchemica = contract.try_getAvailableAlchemica(realmId);
+
+    if (!_parcelAvailableAlchemica.reverted) {
+      const metadata = _parcelAvailableAlchemica.value;
+      parcel.availableAlchemica = metadata;
+
+      log.warning('parcel: {}, PARCEL AVAILIBLE ALCHEMICA DATA ARRIVED, id - {}', [
+        realmId.toString(),
+        metadata.toString()
+      ]);
+    } else {
+      log.error('parcel: {}, PARCEL AVAILIBLE ALCHEMICA  REVERTED', [realmId.toString()]);
     }
   }
 

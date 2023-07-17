@@ -8,7 +8,7 @@ dataSources:
     source:
       address: '0x86935F11C86623deC8a25696E1C19a8659CbF95d'
       abi: AavegotchiDiamond
-      startBlock: 20667840
+      startBlock: 36667840
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -34,7 +34,7 @@ dataSources:
     source:
       address: '0x1d0360bac7299c86ec8e99d0c1c9a95fefaf2a11'
       abi: RealmDiamond
-      startBlock: 20667840 # contract creation
+      startBlock: 36667840 # contract creation
       #   startBlock: 28260500 # installations release
       #   startBlock: 32667840 # surveyrs release--c
     mapping:
